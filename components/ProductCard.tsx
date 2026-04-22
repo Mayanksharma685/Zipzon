@@ -1,12 +1,15 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native'
-import React, { useState } from 'react'
+import React from 'react'
 import { ProductCardProps } from '../constants/types'
 import { Link } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS } from '@/constants'
+import { useWishlist } from '../context/WishlistContext'
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const [isLiked, setIsLiked] = useState(false);
+
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const isLiked = isInWishlist(product._id);
 
   return (
     <Link href={`/product/${product._id}`} asChild>
@@ -15,7 +18,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* favourite icon */}
           <TouchableOpacity
             style={{ position: 'absolute', top: 8, right: 8, zIndex: 20, padding: 8, backgroundColor: '#fff', borderRadius: 9999, elevation: 2 }}
-            onPress={e => { e.stopPropagation(); setIsLiked(liked => !liked); }}
+            onPress={e => { e.stopPropagation(); toggleWishlist(product); }}
           >
             <Ionicons
               name={isLiked ? 'heart' : 'heart-outline'}
@@ -37,17 +40,15 @@ export default function ProductCard({ product }: ProductCardProps) {
         </View>
         {/* ⭐ Star Rating */}
         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
-        <Ionicons name="star" size={14} color="#FFD700" />
-        <Text style={{ fontSize: 12, color: '#666', marginLeft: 4 }}>
-          {product.ratings?.average || 4.6}
-        </Text>
+          <Ionicons name="star" size={14} color="#FFD700" />
+          <Text style={{ fontSize: 12, color: '#666', marginLeft: 4 }}>
+            {product.ratings?.average || 4.6}
+          </Text>
         </View>
 
         <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 8 }} numberOfLines={1}>{product.name}</Text>
         <Text style={{ color: '#666', fontSize: 13, marginTop: 2 }} numberOfLines={1}>${product.price}</Text>
       </TouchableOpacity>
-
-      
     </Link>
   )
 }
