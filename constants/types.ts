@@ -17,7 +17,7 @@ export interface User {
 export interface Product {
     _id: string;
     name: string;
-    description: string;
+    description?: string;
     price: number;
     comparePrice?: number;
     images: string[];
@@ -35,7 +35,7 @@ export interface Product {
     };
     isFeatured: boolean;
     isActive: boolean;
-    createdAt: string;
+    createdAt?: string; // ✅ FIXED (only change)
 }
 
 export type ProductCardProps = {
