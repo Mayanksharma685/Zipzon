@@ -10,8 +10,8 @@ import {
 import React, { use, useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Product } from "../../../constants/types";
-import { useCart } from "../../../context/CartContext";
-import { useWishlist } from "../../../context/WishlistContext";
+import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import { dummyProducts } from "@/assets/assets";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "@/constants";
