@@ -7,12 +7,14 @@ import Header from 'components/Header'
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS } from '@/constants'  
 import { PROFILE_MENU } from '@/constants' 
+import { useClerk } from '@clerk/clerk-expo'
 
 export default function Profile() {
 
-  const {user} = {user: dummyUser}
+   const {user, signOut} = useClerk();
   const router = useRouter();
   const handleLogout = async() => {
+    await signOut();
     router.replace("/sign-in")
   }
   return (
@@ -64,7 +66,6 @@ export default function Profile() {
         </View>
         <Text className='text-xl font-bold text-primary'>{user.firstName + " " + user.lastName}</Text>
         <Text className='text-sm text-secondary'>{user.emailAddresses[0].emailAddress}</Text>
-
 
       {/*admin is same as user*/}
       {user.publicMetadata?.role === 'admin' && (
