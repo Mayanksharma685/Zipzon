@@ -8,7 +8,7 @@ import { useSignUp } from '@clerk/clerk-expo'
 import { COLORS } from "@/constants";
 
 export default function SignUpScreen() {
-    const { signUp, setActive, isLoaded } = useSignUp(); // ✅ added isLoaded
+    const { signUp, setActive, isLoaded } = useSignUp();
     const router = useRouter();
 
     const [emailAddress, setEmailAddress] = useState("");
@@ -20,8 +20,7 @@ export default function SignUpScreen() {
     const [loading, setLoading] = useState(false);
 
     const onSignUpPress = async () => {
-
-        if (!isLoaded || !signUp) return; // ✅ safety check
+        if (!isLoaded || !signUp) return;
 
         if (!emailAddress || !password || !firstName || !lastName) {
             Toast.show({
@@ -65,8 +64,7 @@ export default function SignUpScreen() {
     };
 
     const onVerifyPress = async () => {
-
-        if (!isLoaded || !signUp || !setActive) return; // ✅ safety check
+        if (!isLoaded || !signUp || !setActive) return;
 
         if (!code) {
             Toast.show({
@@ -110,76 +108,145 @@ export default function SignUpScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-white justify-center" style={{ padding: 28 }}>
+        <SafeAreaView className="flex-1 justify-center bg-[#0F172A]" style={{ padding: 20 }}>
+
+            {/* Back Button */}
+            <TouchableOpacity onPress={() => router.push("/")} className="absolute top-12 left-6 z-10">
+                <Ionicons name="arrow-back" size={26} color="#fff" />
+            </TouchableOpacity>
+
             {!pendingVerification ? (
-                <>
-                    <TouchableOpacity onPress={() => router.push("/")} className="absolute top-12 z-10">
-                        <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
-                    </TouchableOpacity>
+                <View className="bg-[#111827] rounded-3xl p-6 shadow-lg">
 
-                    <View className="items-center mb-8">
-                        <Text className="text-3xl font-bold text-primary mb-2">Create Account</Text>
-                        <Text className="text-secondary">Sign up to get started</Text>
+                    {/* Header */}
+                    <View className="items-center mb-10 w-full">
+                        <Text className="text-5xl font-extrabold text-white text-center tracking-wide">
+                            Zip<Text className="text-[#4F46E5]">Zon</Text>
+                        </Text>
+
+                        <Text className="text-gray-500 text-xs mt-1 tracking-wide">
+                            Created by Mayank Sharma
+                        </Text>
+
+                        <View className="w-14 h-[3px] bg-[#4F46E5] rounded-full mt-3 mb-4" />
+
+                        <Text className="text-gray-400 text-center text-sm px-6 leading-5">
+                            Create your account ✨{"\n"}
+                            Join ZipZon and get started
+                        </Text>
                     </View>
 
-                    <View className="mb-4">
-                        <Text className="text-primary font-medium mb-2">First Name</Text>
-                        <TextInput className="w-full bg-surface p-4 rounded-xl text-primary" placeholder="John" placeholderTextColor="#999" value={firstName} onChangeText={setFirstName} />
+                    {/* Inputs */}
+                    <View className="mb-3">
+                        <Text className="text-gray-300 mb-1">First Name</Text>
+                        <TextInput
+                            className="bg-[#1F2937] p-4 rounded-xl text-white"
+                            placeholder="John"
+                            placeholderTextColor="#6B7280"
+                            value={firstName}
+                            onChangeText={setFirstName}
+                        />
                     </View>
 
-                    <View className="mb-6">
-                        <Text className="text-primary font-medium mb-2">Last Name</Text>
-                        <TextInput className="w-full bg-surface p-4 rounded-xl text-primary" placeholder="Doe" placeholderTextColor="#999" value={lastName} onChangeText={setLastName} />
+                    <View className="mb-3">
+                        <Text className="text-gray-300 mb-1">Last Name</Text>
+                        <TextInput
+                            className="bg-[#1F2937] p-4 rounded-xl text-white"
+                            placeholder="Doe"
+                            placeholderTextColor="#6B7280"
+                            value={lastName}
+                            onChangeText={setLastName}
+                        />
                     </View>
 
-                    <View className="mb-4">
-                        <Text className="text-primary font-medium mb-2">Email</Text>
-                        <TextInput className="w-full bg-surface p-4 rounded-xl text-primary" placeholder="user@example.com" placeholderTextColor="#999" autoCapitalize="none" keyboardType="email-address" value={emailAddress} onChangeText={setEmailAddress} />
+                    <View className="mb-3">
+                        <Text className="text-gray-300 mb-1">Email</Text>
+                        <TextInput
+                            className="bg-[#1F2937] p-4 rounded-xl text-white"
+                            placeholder="user@example.com"
+                            placeholderTextColor="#6B7280"
+                            value={emailAddress}
+                            onChangeText={setEmailAddress}
+                        />
                     </View>
 
-                    <View className="mb-6">
-                        <Text className="text-primary font-medium mb-2">Password</Text>
-                        <TextInput className="w-full bg-surface p-4 rounded-xl text-primary" placeholder="********" placeholderTextColor="#999" secureTextEntry value={password} onChangeText={setPassword} />
+                    <View className="mb-5">
+                        <Text className="text-gray-300 mb-1">Password</Text>
+                        <TextInput
+                            className="bg-[#1F2937] p-4 rounded-xl text-white"
+                            placeholder="********"
+                            placeholderTextColor="#6B7280"
+                            secureTextEntry
+                            value={password}
+                            onChangeText={setPassword}
+                        />
                     </View>
 
+                    {/* Button */}
                     <TouchableOpacity
-                        className={`w-full py-4 rounded-full items-center mb-10 ${
-                            loading || !emailAddress || !password
-                                ? "bg-gray-300"
-                                : "bg-primary"
+                        className={`py-4 rounded-xl items-center ${
+                            loading ? "bg-gray-600" : "bg-[#4F46E5]"
                         }`}
                         onPress={onSignUpPress}
-                        disabled={loading || !emailAddress || !password}
+                        disabled={loading}
                     >
-                        {loading ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-bold text-lg">Continue</Text>}
+                        {loading ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <Text className="text-white font-bold text-lg">Continue</Text>
+                        )}
                     </TouchableOpacity>
 
-                    <View className="flex-row justify-center">
-                        <Text className="text-secondary">Already have an account? </Text>
+                    {/* Footer */}
+                    <View className="flex-row justify-center mt-6">
+                        <Text className="text-gray-400">Already have an account? </Text>
                         <Link href="/sign-in">
-                            <Text className="text-primary font-bold">Login</Text>
+                            <Text className="text-[#4F46E5] font-bold">Login</Text>
                         </Link>
                     </View>
-                </>
+
+                </View>
             ) : (
-                <>
-                    <TouchableOpacity onPress={() => router.back()} className="absolute top-12 z-10">
-                        <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
-                    </TouchableOpacity>
+                <View className="bg-[#111827] rounded-3xl p-6 shadow-lg">
 
-                    <View className="items-center mb-8">
-                        <Text className="text-3xl font-bold text-primary mb-2">Verify Email</Text>
-                        <Text className="text-secondary text-center">Enter the code sent to your email</Text>
+                    {/* Header */}
+                    <View className="items-center mb-10 w-full">
+                        <Text className="text-5xl font-extrabold text-white text-center tracking-wide">
+                            Zip<Text className="text-[#4F46E5]">Zon</Text>
+                        </Text>
+
+                        <Text className="text-gray-500 text-xs mt-1 tracking-wide">
+                            Created by Mayank Sharma
+                        </Text>
+
+                        <View className="w-14 h-[3px] bg-[#4F46E5] rounded-full mt-3 mb-4" />
+
+                        <Text className="text-gray-400 text-center text-sm px-6 leading-5">
+                            Verify your email 🔐{"\n"}
+                            Enter the code sent to you
+                        </Text>
                     </View>
 
-                    <View className="mb-6">
-                        <TextInput className="w-full bg-surface p-4 rounded-xl text-primary text-center tracking-widest" placeholder="123456" placeholderTextColor="#999" keyboardType="number-pad" value={code} onChangeText={setCode} />
-                    </View>
+                    <TextInput
+                        className="bg-[#1F2937] p-4 rounded-xl text-white text-center text-lg tracking-widest mb-5"
+                        placeholder="123456"
+                        placeholderTextColor="#6B7280"
+                        value={code}
+                        onChangeText={setCode}
+                    />
 
-                    <TouchableOpacity className="w-full bg-primary py-4 rounded-full items-center" onPress={onVerifyPress} disabled={loading}>
-                        {loading ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-bold text-lg">Verify</Text>}
+                    <TouchableOpacity
+                        className="bg-[#4F46E5] py-4 rounded-xl items-center"
+                        onPress={onVerifyPress}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <Text className="text-white font-bold text-lg">Verify</Text>
+                        )}
                     </TouchableOpacity>
-                </>
+
+                </View>
             )}
         </SafeAreaView>
     );
