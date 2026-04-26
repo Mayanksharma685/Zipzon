@@ -50,20 +50,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
     }
 
-    const addToCart = async (product: Product, size: string) => {
+     const addToCart = async (product: Product, size: string) => {
 
     }
 
     const removeFromCart = async (productId: string, size: string) => {
-        
+
     }
 
     const updateQuantity = async (productId: string, quantity: number, size: string = "M") => {
-        
+
     }
 
     const clearCart = async () => {
-        
+
     }
 
     const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);

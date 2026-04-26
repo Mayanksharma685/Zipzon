@@ -6,7 +6,7 @@ import { COLORS } from "@/constants";
 import { dummyUser } from "@/assets/assets";
 
 export default function AdminLayout() {
-    const { user } = { user: dummyUser }
+      const { user } = { user: dummyUser }
     const isLoaded = true;
     const router = useRouter();
 

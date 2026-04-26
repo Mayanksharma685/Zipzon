@@ -98,7 +98,7 @@ export default function EditProduct() {
             return;
         }
 
-        try {
+         try {
             setSubmitting(true);
             const formData = new FormData();
 
