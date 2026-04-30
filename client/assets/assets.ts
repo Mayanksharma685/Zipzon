@@ -479,7 +479,7 @@ export const dummyProducts = [
             average: 0,
             count: 0,
         },
-        _id: "6683db0d7f779795ecfa9907",
+        _id: "6683db0d7f779795ecfa9908",
         name: "Men Slim Fit Relaxed Denim Jacket",
         description: "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
         price: 84,
