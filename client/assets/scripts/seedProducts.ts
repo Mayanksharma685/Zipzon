@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import Product from "../models/Product.js";
-
+import Product from "../../../server/models/Product";
 const PRODUCTS = [
     {
         _id: "6683d3d47f779795ecfa98a3",

@@ -7,7 +7,7 @@ import { clerkWebhook } from "./controllers/webhooks.js";
 import makeAdmin from "./scripts/makeAdmin.js";
 import ProductRouter from "./routes/productsRoutes.js";
 import CartRouter from "./routes/cartRoutes.js";
-import OrderRouter from "./routes/OrderRoutes.js";
+import OrderRouter from "./routes/orderRoutes.js";
 import AddressRouter from "./routes/addressRoutes.js";
 import AdminRouter from "./routes/adminRoutes.js";
 import WishlistRouter from "./routes/wishlistRoutes.js";

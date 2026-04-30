@@ -1,10 +1,10 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import React from "react";
-import { useRouter } from "expo-router";
+import Header from "@/assets/components/Header";
+import ProductCard from "@/assets/components/ProductCard";
 import { useWishlist } from "@/context/WishlistContext";
+import { useRouter } from "expo-router";
+import React from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "components/Header";
-import ProductCard from "components/ProductCard";
 
 export default function Favorites() {
   const router = useRouter();

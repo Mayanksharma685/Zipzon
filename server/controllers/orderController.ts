@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
-import Order from "../models/order.js";
+import Order from "../models/Order.js";
 
 // Get user orders
 // GET /api/orders

@@ -1,10 +1,10 @@
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import React from "react";
+import CartItem from "@/assets/components/CartItem";
+import Header from "@/assets/components/Header";
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "expo-router";
+import React from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "components/Header";
-import CartItem from "components/CartItem";
 
 export default function cart() {
   const { cartItems, cartTotal, removeFromCart, updateQuantity } = useCart();

@@ -28,7 +28,7 @@ export const toggleWishlist = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
 
-    // 🚫 Safety check
+    //Safety check
     if (!productId || Array.isArray(productId)) {
       return res.status(400).json({
         success: false,
