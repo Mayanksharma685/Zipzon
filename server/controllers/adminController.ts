@@ -8,32 +8,44 @@ import Order from "../models/Order.js";
 
 export const getDashboardStats = async (req: Request, res: Response) => {
   try {
+    console.log("[Admin] Fetching dashboard stats...");
 
     const totalUsers = await User.countDocuments();
-const totalProducts = await Product.countDocuments();
-const totalOrders = await Order.countDocuments();
+    const totalProducts = await Product.countDocuments();
+    const totalOrders = await Order.countDocuments();
 
-const validOrders = await Order.find({ orderStatus: { $ne: "cancelled" } });
-const totalRevenue = validOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+    const validOrders = await Order.find({ orderStatus: { $ne: "cancelled" } });
+    const totalRevenue = validOrders.reduce((sum, order) => sum + order.totalAmount, 0);
 
-const recentOrders = await Order.find()
-  .sort("-createdAt")
-  .limit(5)
-  .populate("user", "name email");
+    const recentOrders = await Order.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("user", "name email");
 
-res.json({
-  success: true,
-  data: {
-    totalUsers,
-    totalProducts,
-    totalOrders,
-    totalRevenue,
-    recentOrders,
-  },
-});
+    console.log("[Admin] Stats calculated:", {
+      totalUsers,
+      totalProducts,
+      totalOrders,
+      totalRevenue,
+      recentOrdersCount: recentOrders.length,
+    });
 
-
+    res.json({
+      success: true,
+      data: {
+        totalUsers,
+        totalProducts,
+        totalOrders,
+        totalRevenue,
+        recentOrders,
+      },
+    });
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("[Admin] Error fetching stats:", error.message);
+    res.status(500).json({ 
+      success: false, 
+      message: error.message,
+      error: error.message 
+    });
   }
 };

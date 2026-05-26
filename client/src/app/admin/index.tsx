@@ -1,10 +1,13 @@
-import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { ScrollView, Text, View, ActivityIndicator, RefreshControl } from "react-native";
 import { COLORS, getStatusColor } from "@/constants";
-import { dummyAdminStats } from "@/assets/assets";
+import { useAuth } from "@clerk/clerk-expo";
+import api from "constants/api";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";
 
 export default function AdminDashboard() {
+
+    const { getToken } = useAuth();
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -16,15 +19,38 @@ export default function AdminDashboard() {
         recentOrders: []
     });
 
-    const fetchStats = async () => {
-        setStats(dummyAdminStats as any);
+const fetchStats = async () => {
+    try {
+        const token = await getToken()
+
+        const { data } = await api.get('/admin/stats', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+
+        if(data.success){
+            setStats(data.data)
+        }
+
+    } catch (error) {
+        console.error("Failed to fetch admin stats:", error)
+    } finally {
         setLoading(false);
         setRefreshing(false);
-    };
-
+    }
+};
     useEffect(() => {
         fetchStats();
     }, []);
+
+    // Refresh stats whenever this screen comes into focus
+    useFocusEffect(
+        useCallback(() => {
+            console.log("[AdminDashboard] Screen focused, refreshing stats");
+            fetchStats();
+        }, [])
+    );
 
     const onRefresh = () => {
         setRefreshing(true);

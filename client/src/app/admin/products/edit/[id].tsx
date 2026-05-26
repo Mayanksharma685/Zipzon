@@ -1,15 +1,17 @@
+import { CATEGORIES, COLORS } from "@/constants";
+import { useAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import api from "constants/api";
+import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TextInput, TouchableOpacity, View, Switch, Image, ActivityIndicator, Platform, Modal, FlatList, TouchableWithoutFeedback } from "react-native";
+import { ActivityIndicator, FlatList, Image, Modal, ScrollView, Switch, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import Toast from 'react-native-toast-message';
-import { COLORS, CATEGORIES } from "@/constants";
-import { Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import { dummyProducts } from "@/assets/assets";
 
 export default function EditProduct() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
+    const { getToken } = useAuth();
 
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -31,20 +33,23 @@ export default function EditProduct() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const product: any = dummyProducts.find((p) => p._id === id);
-                setName(product.name);
-                setDescription(product.description || "");
-                setPrice(product.price.toString());
-                setStock(product.stock.toString());
-                setCategory(typeof product.category === 'object' ? product.category.name : product.category);
-                setIsFeatured(product.isFeatured);
+                const { data } = await api.get(`/products/${id}`);
+                if(data?.success) {
+                    const product = data.data;
+                    setName(product.name);
+                    setDescription(product.description || "");
+                    setPrice(product.price.toString());
+                    setStock(product.stock.toString());
+                    setCategory(typeof product.category === 'object' ? product.category.name : product.category);
+                    setIsFeatured(product.isFeatured);
 
-                if (product.sizes) setSizes(Array.isArray(product.sizes) ? product.sizes.join(", ") : product.sizes);
+                    if (product.sizes) setSizes(Array.isArray(product.sizes) ? product.sizes.join(", ") : product.sizes);
 
-                if (product.images && Array.isArray(product.images)) {
-                    setExistingImages(product.images);
-                } else if (product.images) {
-                    setExistingImages([product.images]);
+                    if (product.images && Array.isArray(product.images)) {
+                        setExistingImages(product.images);
+                    } else if (product.images) {
+                        setExistingImages([product.images]);
+                    }
                 }
             } catch (error: any) {
                 console.error("Failed to fetch product:", error);
@@ -89,7 +94,7 @@ export default function EditProduct() {
     };
 
     const handleSubmit = async () => {
-        if (!name || !price || sizes.length < 1) {
+        if (!name || !price || !category) {
             Toast.show({
                 type: 'error',
                 text1: 'Missing Fields',
@@ -98,43 +103,77 @@ export default function EditProduct() {
             return;
         }
 
-         try {
+        try {
             setSubmitting(true);
+            const token = await getToken();
+            
+            console.log("[EditProduct] Starting update with", newImages.length, "new images");
+            
+            // Convert new images to blobs
+            const newImageBlobs = await Promise.all(
+                newImages.map(async (uri) => {
+                    const response = await fetch(uri);
+                    return await response.blob();
+                })
+            );
+            
+            // Create FormData
             const formData = new FormData();
-
             formData.append("name", name);
             formData.append("description", description);
             formData.append("price", price);
-            formData.append("stock", stock);
+            formData.append("stock", stock || '0');
             formData.append("category", category);
             formData.append("isFeatured", String(isFeatured));
-            formData.append("sizes", sizes);
+            
+            const sizeArray = sizes
+                .split(",")
+                .map((s: string) => s.trim())
+                .filter((s: string) => s !== "");
+            formData.append("sizes", JSON.stringify(sizeArray));
 
-            // Append existing images
-            existingImages.forEach((img) => {
-                formData.append("existingImages", img);
-            });
-
-            // Append new images
-            for (const [i, uri] of newImages.entries()) {
-                const filename = `new-image-${i}.jpg`;
-                if (Platform.OS === "web") {
-                    const blob = await (await fetch(uri)).blob();
-                    formData.append("images", new File([blob], filename, { type: "image/jpeg" }));
-                } else {
-                    formData.append("images", { uri, name: filename, type: "image/jpeg" } as any);
-                }
+            if(existingImages.length > 0) {
+                formData.append("existingImages", JSON.stringify(existingImages));
             }
+
+            newImageBlobs.forEach((blob, i) => {
+                formData.append("images", blob, `new-image-${i}.jpg`);
+            });
+            
+            console.log("[EditProduct] Sending request...");
+            
+            // Use fetch instead of axios for multipart
+            const response = await fetch(`${api.defaults.baseURL}/products/${id}`, {
+                method: 'PUT',
+                headers: { 
+                    Authorization: `Bearer ${token}`
+                },
+                body: formData
+            });
+            
+            const data = await response.json();
+            console.log("[EditProduct] Response:", data);
+
+            if (!response.ok || !data?.success) {
+                throw new Error(data?.message || "Update failed");
+            }
+            
+            Toast.show({
+                type: 'success',
+                text1: 'Product Updated',
+                text2: 'Your product has been updated successfully'
+            });
+            
+            setSubmitting(false);
             router.back();
         } catch (error: any) {
-            console.error("Failed to update product:", error);
+            setSubmitting(false);
+            console.error("[EditProduct] Error:", error.message);
             Toast.show({
                 type: 'error',
                 text1: 'Failed to Update Product',
-                text2: error.response?.data?.message || "Something went wrong"
+                text2: error.message || "Something went wrong"
             });
-        } finally {
-            setSubmitting(false);
         }
     };
 
